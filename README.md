@@ -21,9 +21,56 @@ File name	Purpose
 logic_gates.v	Logic-gate RTL
 logic_gates_tb.v	All input combinations and VCD generation
  # Verilog  Program
+ ```
+module basic_gates (
+    input  wire a,
+    input  wire b,
+    output wire y_and,
+    output wire y_or,
+    output wire y_not
+);
 
+    assign y_and = a & b;   // AND gate
+    assign y_or  = a | b;   // OR gate
+    assign y_not = ~a;      // NOT gate (inverter)
+
+endmodule
+```
 # **Test Bench Program**
+```
+module tb2;
 
+    reg a, b;
+    wire y_and, y_or, y_not;
+
+    // Instantiate the design under test (DUT)
+    basic_gates uut (
+        .a(a),
+        .b(b),
+        .y_and(y_and),
+        .y_or(y_or),
+        .y_not(y_not)
+    );
+
+    initial begin
+        // ---- VCD dump setup ----
+        $dumpfile("basic_gates.vcd");   // name of the VCD file to be generated
+        $dumpvars(0, tb2);               // dump all signals in this testbench hierarchy
+
+        // ---- Apply all 4 input combinations ----
+        $monitor("Time=%0t a=%b b=%b | AND=%b OR=%b NOT(a)=%b", $time, a, b, y_and, y_or, y_not);
+
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+
+        #10 $finish;
+#10;
+    end
+
+endmodule
+```
 
 
 
@@ -71,34 +118,15 @@ Verify that y_or = 1 whenever a=1 OR b=1 (any input high forces the output high)
 Verify that y_not is always the exact complement of a, regardless of b.
 The waveform should agree with the truth table.
 # Expected Result
-The basic logic gates — AND, OR, and NOT — were realized using Verilog HDL:
-Y_AND = A.B
-Y_OR = A+B
-Y_NOT = A'
-The design was compiled and simulated using Synopsys VCS, and the functionality was verified using DVE waveform analysis, matching the expected truth table.
-Output
+<img width="563" height="106" alt="Screenshot 2026-10-29 110321" src="https://github.com/user-attachments/assets/ae215c55-1a03-4ce9-9b51-3bbcaaca5012" />
+
 # OUTPUT
+<img width="1851" height="936" alt="Screenshot 2026-10-29 103125" src="https://github.com/user-attachments/assets/cdd002f1-9a03-4d2e-af43-713ee293bb26" />
+
 
 
  
-# Viva-Voce Questions
 
-•	What is a logic gate?
 
-•	What are the basic logic gates in digital electronics?
 
-•	What is the Boolean expression for an AND gate? An OR gate? A NOT gate?
-
-•	Why is the NOT gate also called an inverter?
-
-•	What is a universal gate, and how can NAND/NOR realize AND, OR, and NOT?
-
-•	What is the purpose of a Verilog testbench?
-
-•	Why is a VCD file generated?
-
-•	What is the purpose of ./simv?
-•	What is the purpose of DVE?
-•	What is the difference between simulation and synthesis?
-•	What is the difference between $dumpfile and $dumpvars?
 
